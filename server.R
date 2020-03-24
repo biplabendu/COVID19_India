@@ -47,10 +47,10 @@ allData =
   inner_join(loadData("time_series_19-covid-Recovered.csv", "CumRecovered"))
 
 
-names(allData)[1] <- "State_or_Province"
-names(allData)[2] <- "Country"
-
-allData %>% glimpse()
+# names(allData)[1] <- "State_or_Province"
+# names(allData)[2] <- "Country"
+# 
+# allData %>% glimpse()
 
 # Read dataset from Kaggle/Github ------------------------------------------------
 
@@ -143,9 +143,18 @@ df <- df %>%
   
 df[is.na(df)] <- 0  
 
+df <- df %>% 
+  filter(!(State_or_Province == ""))
+
+## Update the github curated file here -------
+# 
+# df.curated <- df
+# names(df.curated) <- names(allData)
+# save(df, file="./curated_data_India/india_curated_data_BD.csv")
+
 # Let's fill in the data for each state, for all the dates until available date
 
-allData <- rbind(allData %>% filter(!(Country == "India")), df)
+allData <- df
 
 
 # allData %>% 
@@ -223,3 +232,4 @@ function(input, output, session) {
   output$dailyMetrics = renderBarPlot("New", legendPrefix="New", yaxisTitle="New Cases per Day")
   output$cumulatedMetrics = renderBarPlot("Cum", legendPrefix="Cumulated", yaxisTitle="Cumulated Cases")
 }
+

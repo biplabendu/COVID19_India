@@ -5,9 +5,9 @@ account: biplabendu
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1983491
-bundleId: 2918717
+bundleId: 2920101
 url: https://biplabendu.shinyapps.io/covid19_India_by_state/
-when: 1585065782.48757
+when: 1585085472.86074
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: .RData|app.R
+ignoredFiles: save_curated_data.R|time_series_19-covid-Confirmed.csv|time_series_19-covid-Deaths.csv|time_series_19-covid-Recovered.csv|curated_data_India/india_curated_data_BD.csv
