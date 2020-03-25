@@ -8,7 +8,7 @@ library(tidyr)
 
 # Read data from JHU ------------------------------------------------------
 
-# baseURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series"
+baseURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series"
 
 f1 = list(family="Courier New, monospace", size=12, color="rgb(30,30,30)")
 
@@ -52,109 +52,112 @@ allData =
 # 
 # allData %>% glimpse()
 
-# Read dataset from Kaggle/Github ------------------------------------------------
+# Read dataset from Github ------------------------------------------------
 
-## Data available until
-current.date <- "24/03/20"
-
-# Data downloaded from: https://www.kaggle.com/sudalairajkumar/covid19-in-india/version/7
-# Download timestamp: 0225 hrs, 20th March 2020
+# ## Data available until
+# current.date <- "25/03/20"
+# 
+# # Data downloaded from: https://www.kaggle.com/sudalairajkumar/covid19-in-india/version/7
+# # Download timestamp: 0225 hrs, 20th March 2020
 # urlfile <- "https://github.com/biplabendu/homepage/raw/master/covid19_data_india/covid_19_india_24Mar20.csv"
 # 
 # india <- read.csv(url(urlfile),
 #                      header = T, stringsAsFactors = F)
 # save(india, file="india_data.csv")
-load(file="india_data.csv")
-
-# india %>% glimpse()
-
-
-india$Date <- as.Date(india$Date, "%d/%m/%y")
-
-# Incorrect data entry | Fix it
-india[india$State.UnionTerritory == "Maharashtra" & 
-        india$Date == "2020-03-11",]$ConfirmedIndianNational <- 5
-
-## Different names for the same state | Fix this
-# 1. Pondicherry = Puducherry
-# 2. Union Territory of Chandigarh = Chandigarh
-# 3. Chattisgarh = Chhattisgarh
-# 4. Union Territory of Jammu and Kashmir = Jammu and Kashmir
-# 5. Union Territory of Ladakh = Ladakh
-
-india[india$State.UnionTerritory == "Pondicherry",]$State.UnionTerritory <- "Puducherry"
-india[india$State.UnionTerritory == "Union Territory of Chandigarh",]$State.UnionTerritory <- "Chandigarh"
-india[india$State.UnionTerritory == "Chattisgarh",]$State.UnionTerritory <- "Chhattisgarh"
-india[india$State.UnionTerritory == "Union Territory of Jammu and Kashmir",]$State.UnionTerritory <- "Jammu and Kashmir"
-india[india$State.UnionTerritory == "Union Territory of Ladakh",]$State.UnionTerritory <- "Ladakh"
-
-
-allData_india <-
-  india %>%
-  rename("State_or_Province" = State.UnionTerritory, date = Date) %>%
-  mutate("Country" = "India") %>%
-  rename(Confirmed = ConfirmedIndianNational) %>%
-  arrange(State_or_Province, date) %>% 
-  ## need to fix this - filter to keep the right copy since there are multiple entries
-  distinct(State_or_Province, Country, date, .keep_all = T) %>%   
-  rename(CumConfirmed = Confirmed,
-         CumDeaths = Deaths,
-         CumRecovered = Cured) %>%
-  select(State_or_Province, Country, date, CumConfirmed, CumRecovered, CumDeaths) %>% 
-  as_tibble()
-
-# allData_india %>% 
-#   filter(date == "2020-03-13") %>% 
-#   View()
+# load(file="india_data.csv")
 # 
-# allData_india %>% 
-#   group_by(State_or_Province,date) %>% 
-#   summarise_if(is.numeric, sum, na.rm=TRUE) %>% 
-#   View()
+# # india %>% glimpse()
+# 
+# 
+# india$Date <- as.Date(india$Date, "%d/%m/%y")
+# 
+# # Incorrect data entry | Fix it
+# india[india$State.UnionTerritory == "Maharashtra" & 
+#         india$Date == "2020-03-11",]$ConfirmedIndianNational <- 5
+# 
+# ## Different names for the same state | Fix this
+# # 1. Pondicherry = Puducherry
+# # 2. Union Territory of Chandigarh = Chandigarh
+# # 3. Chattisgarh = Chhattisgarh
+# # 4. Union Territory of Jammu and Kashmir = Jammu and Kashmir
+# # 5. Union Territory of Ladakh = Ladakh
+# 
+# india[india$State.UnionTerritory == "Pondicherry",]$State.UnionTerritory <- "Puducherry"
+# india[india$State.UnionTerritory == "Union Territory of Chandigarh",]$State.UnionTerritory <- "Chandigarh"
+# india[india$State.UnionTerritory == "Chattisgarh",]$State.UnionTerritory <- "Chhattisgarh"
+# india[india$State.UnionTerritory == "Union Territory of Jammu and Kashmir",]$State.UnionTerritory <- "Jammu and Kashmir"
+# india[india$State.UnionTerritory == "Union Territory of Ladakh",]$State.UnionTerritory <- "Ladakh"
+# 
+# 
+# allData_india <-
+#   india %>%
+#   rename("State_or_Province" = State.UnionTerritory, date = Date) %>%
+#   mutate("Country" = "India") %>%
+#   rename(Confirmed = ConfirmedIndianNational) %>%
+#   arrange(State_or_Province, date) %>% 
+#   ## need to fix this - filter to keep the right copy since there are multiple entries
+#   distinct(State_or_Province, Country, date, .keep_all = T) %>%   
+#   rename(CumConfirmed = Confirmed,
+#          CumDeaths = Deaths,
+#          CumRecovered = Cured) %>%
+#   select(State_or_Province, Country, date, CumConfirmed, CumRecovered, CumDeaths) %>% 
+#   as_tibble()
+# 
+# # allData_india %>% 
+# #   filter(date == "2020-03-13") %>% 
+# #   View()
+# # 
+# # allData_india %>% 
+# #   group_by(State_or_Province,date) %>% 
+# #   summarise_if(is.numeric, sum, na.rm=TRUE) %>% 
+# #   View()
+# 
+# # head(allData)
+# 
+# 
+# # Format the data for dates 22 Jan 2020 to current --------------------------------------------------------
+# 
+# ## Code borrowed from: https://biostats.w.uib.no/7-building-a-dataframe-from-a-bunch-of-vectorsseries/
+# indian_states <- levels(factor(allData_india$State_or_Province)) %>% as.character()
+# 
+# dates <- rep(seq(as.Date("22/01/20", format = "%d/%m/%y"), 
+#              as.Date(current.date, format = "%d/%m/%y"), 
+#              by="days"), length(indian_states))
+# country = rep("India", length(dates))
+# states = rep(indian_states, each=length(dates)/length(indian_states))
+# confirmed = as.integer(rep(0, length(dates)))
+# recovered = as.integer(rep(0, length(dates)))
+# deaths = as.integer(rep(0, length(dates)))
+# 
+# df <- data.frame(State_or_Province = states, 
+#               Country = country,
+#               date = dates,
+#               CumConfirmed = confirmed,
+#               CumRecovered = recovered,
+#               CumDeaths = deaths,
+#               stringsAsFactors = F)
+# 
+# df <- df %>%
+#   select(State_or_Province:date) %>% 
+#   left_join(allData_india, by = c("State_or_Province", "Country", "date"))
+#   
+# df[is.na(df)] <- 0  
+# 
+# df <- df %>% 
+#   filter(!(State_or_Province == ""))
+# 
+# ## Update the github curated file here -------
+# 
+# df.curated <- df
+# names(df.curated) <- names(allData)
+# write.csv(df, file="./curated_data_India/india_curated_data_BD.csv")
 
-# head(allData)
-
-
-# Format the data for dates 22 Jan 2020 to current --------------------------------------------------------
-
-## Code borrowed from: https://biostats.w.uib.no/7-building-a-dataframe-from-a-bunch-of-vectorsseries/
-indian_states <- levels(factor(allData_india$State_or_Province)) %>% as.character()
-
-dates <- rep(seq(as.Date("22/01/20", format = "%d/%m/%y"), 
-             as.Date(current.date, format = "%d/%m/%y"), 
-             by="days"), length(indian_states))
-country = rep("India", length(dates))
-states = rep(indian_states, each=length(dates)/length(indian_states))
-confirmed = as.integer(rep(0, length(dates)))
-recovered = as.integer(rep(0, length(dates)))
-deaths = as.integer(rep(0, length(dates)))
-
-df <- data.frame(State_or_Province = states, 
-              Country = country,
-              date = dates,
-              CumConfirmed = confirmed,
-              CumRecovered = recovered,
-              CumDeaths = deaths,
-              stringsAsFactors = F)
-
-df <- df %>%
-  select(State_or_Province:date) %>% 
-  left_join(allData_india, by = c("State_or_Province", "Country", "date"))
-  
-df[is.na(df)] <- 0  
-
-df <- df %>% 
-  filter(!(State_or_Province == ""))
-
-## Update the github curated file here -------
-
-df.curated <- df
-names(df.curated) <- names(allData)
-write.csv(df, file="./curated_data_India/india_curated_data_BD.csv")
 
 # Let's fill in the data for each state, for all the dates until available date
 
-allData <- df
+df <- read.csv("./curated_data_India/india_curated_data_BD.csv")
+
+allData <-  rbind(allData %>% filter(!(`Country/Province` == "India")), df)
 
 
 # allData %>% 
@@ -167,10 +170,10 @@ function(input, output, session) {
   
   data = reactive({
     d = allData %>%
-      filter(Country == input$country)
+      filter(`Country/Region` == input$country)
     if(input$state != "<all>") {
       d = d %>% 
-        filter(State_or_Province == input$state) 
+        filter(`Province/State` == input$state) 
     } else {
       d = d %>% 
         group_by(date) %>% 
@@ -188,13 +191,13 @@ function(input, output, session) {
   
   observeEvent(input$country, {
     states = allData %>%
-      filter(Country == input$country) %>% 
-      pull(State_or_Province)
+      filter(`Country/Region` == input$country) %>% 
+      pull(`Province/State`)
     states = c("<all>", sort(unique(states)))
     updateSelectInput(session, "state", choices=states, selected=states[1])
   })
   
-  countries = sort(unique(allData$Country))
+  countries = sort(unique(allData$`Country/Region`))
   
   updateSelectInput(session, "country", choices=countries, selected="India")
   
@@ -232,4 +235,3 @@ function(input, output, session) {
   output$dailyMetrics = renderBarPlot("New", legendPrefix="New", yaxisTitle="New Cases per Day")
   output$cumulatedMetrics = renderBarPlot("Cum", legendPrefix="Cumulated", yaxisTitle="Cumulated Cases")
 }
-
