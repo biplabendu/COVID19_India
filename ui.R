@@ -14,7 +14,7 @@ shinyUI(fluidPage(
   titlePanel("Tracking Coronavirus (COVID-19) in India*"),
   sidebarLayout(
     sidebarPanel("*Indian nationals only"),
-    mainPanel(em(paste0("Last updated on 24th March 2020 2015 IST")))
+    mainPanel(em(paste0("Last updated on 25th March 2020 6:45 pm IST")))
     ),
   fluidRow(
     column(

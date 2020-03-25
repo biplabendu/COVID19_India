@@ -147,10 +147,10 @@ df <- df %>%
   filter(!(State_or_Province == ""))
 
 ## Update the github curated file here -------
-# 
-# df.curated <- df
-# names(df.curated) <- names(allData)
-# save(df, file="./curated_data_India/india_curated_data_BD.csv")
+
+df.curated <- df
+names(df.curated) <- names(allData)
+write.csv(df, file="./curated_data_India/india_curated_data_BD.csv")
 
 # Let's fill in the data for each state, for all the dates until available date
 
