@@ -1,5 +1,7 @@
 
-# Read dataset from Kaggle/Github ------------------------------------------------
+# Read dataset from Github ------------------------------------------------
+
+## Last updated on: 25 Mar 2020,6:11 pm ET
 
 ## Data available until
 current.date <- "25/03/20"
@@ -10,8 +12,8 @@ urlfile <- "https://github.com/biplabendu/homepage/raw/master/covid19_data_india
 
 india <- read.csv(url(urlfile),
                   header = T, stringsAsFactors = F)
-save(india, file="india_data.csv")
-load(file="india_data.csv")
+# save(india, file="india_data.csv")
+# load(file="india_data.csv")
 
 # india %>% glimpse()
 
@@ -97,4 +99,4 @@ df <- df %>%
 
 df.curated <- df
 names(df.curated) <- names(allData)
-write.csv(df, file="./curated_data_India/india_curated_data_BD.csv")
+write.csv(df.curated, file="./curated_data_India/india_curated_data_BD.csv")

@@ -155,9 +155,11 @@ allData =
 
 # Let's fill in the data for each state, for all the dates until available date
 
-df <- read.csv("./curated_data_India/india_curated_data_BD.csv")
+india.df <- read.csv("./curated_data_India/india_curated_data_BD.csv", stringsAsFactors = F, header = T)
+india.df <- india.df[-1]
+names(india.df) <- names(allData)
 
-allData <-  rbind(allData %>% filter(!(`Country/Province` == "India")), df)
+allData <-  rbind(allData %>% filter(!(`Country/Region` == "India")), india.df)
 
 
 # allData %>% 
@@ -232,6 +234,6 @@ function(input, output, session) {
     })
   }
   
-  output$dailyMetrics = renderBarPlot("New", legendPrefix="New", yaxisTitle="New Cases per Day")
   output$cumulatedMetrics = renderBarPlot("Cum", legendPrefix="Cumulated", yaxisTitle="Cumulated Cases")
+  output$dailyMetrics = renderBarPlot("New", legendPrefix="New", yaxisTitle="New Cases per Day")
 }
