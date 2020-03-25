@@ -66,6 +66,9 @@ allData_india <-
 
 # Format the data for dates 22 Jan 2020 to current --------------------------------------------------------
 
+## Data available until
+current.date <- "25/03/20"
+
 ## Code borrowed from: https://biostats.w.uib.no/7-building-a-dataframe-from-a-bunch-of-vectorsseries/
 indian_states <- levels(factor(allData_india$State_or_Province)) %>% as.character()
 
@@ -98,5 +101,16 @@ df <- df %>%
 ## Update the github curated file here -------
 
 df.curated <- df
+
+loadData = function(fileName, columnName) {
+  load(file=fileName)
+  return(data)
+}
+
+allData =
+  loadData("time_series_19-covid-Confirmed.csv", "CumConfirmed") %>%
+  inner_join(loadData("time_series_19-covid-Deaths.csv", "CumDeaths")) %>%
+  inner_join(loadData("time_series_19-covid-Recovered.csv", "CumRecovered"))
+
 names(df.curated) <- names(allData)
 write.csv(df.curated, file="./curated_data_India/india_curated_data_BD.csv")
