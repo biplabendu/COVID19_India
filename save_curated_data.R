@@ -1,14 +1,15 @@
 
-# Read dataset from Github ------------------------------------------------
+
+# Curate India’s data -----------------------------------------------------
 
 ## Last updated on: 25 Mar 2020,6:11 pm ET
 
 ## Data available until
-current.date <- "25/03/20"
+current.date <- "26/03/20"
 
 # Data downloaded from: https://www.kaggle.com/sudalairajkumar/covid19-in-india/version/7
 # Download timestamp: 0225 hrs, 20th March 2020
-urlfile <- "https://github.com/biplabendu/homepage/raw/master/covid19_data_india/covid_19_india_25Mar20.csv"
+urlfile <- "https://github.com/biplabendu/homepage/raw/master/covid19_data_india/covid_19_india_26Mar20.csv"
 
 india <- read.csv(url(urlfile),
                   header = T, stringsAsFactors = F)
@@ -37,6 +38,7 @@ india[india$State.UnionTerritory == "Chattisgarh",]$State.UnionTerritory <- "Chh
 india[india$State.UnionTerritory == "Union Territory of Jammu and Kashmir",]$State.UnionTerritory <- "Jammu and Kashmir"
 india[india$State.UnionTerritory == "Union Territory of Ladakh",]$State.UnionTerritory <- "Ladakh"
 
+library(tidyverse)
 
 allData_india <-
   india %>%
@@ -67,7 +69,7 @@ allData_india <-
 # Format the data for dates 22 Jan 2020 to current --------------------------------------------------------
 
 ## Data available until
-current.date <- "25/03/20"
+current.date <- "26/03/20"
 
 ## Code borrowed from: https://biostats.w.uib.no/7-building-a-dataframe-from-a-bunch-of-vectorsseries/
 indian_states <- levels(factor(allData_india$State_or_Province)) %>% as.character()
@@ -98,19 +100,55 @@ df[is.na(df)] <- 0
 df <- df %>% 
   filter(!(State_or_Province == ""))
 
-## Update the github curated file here -------
+df.curated.india <- df
 
-df.curated <- df
+
+# Curate JHU data ---------------------------------------------------------
+
+baseURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series"
+
+f1 = list(family="Courier New, monospace", size=12, color="rgb(30,30,30)")
+
+
+# Run it for every update cycle [1] -------------------------------------------
+
+minutesSinceLastUpdate = function(fileName) {
+  (as.numeric(as.POSIXlt(Sys.time())) - as.numeric(file.info(fileName)$ctime)) / 60
+}
 
 loadData = function(fileName, columnName) {
-  load(file=fileName)
+  if(!file.exists(fileName) || minutesSinceLastUpdate(fileName) > 10) {
+    data = read.csv(file.path(baseURL, fileName), check.names=FALSE, stringsAsFactors=FALSE) %>%
+      select(-Lat, -Long) %>%
+      pivot_longer(-(1:2), names_to="date", values_to=columnName) %>%
+      mutate(
+        date=as.Date(date, format="%m/%d/%y"),
+        `Country/Region`=if_else(`Country/Region` == "", "?", `Country/Region`),
+        `Province/State`=if_else(`Province/State` == "", "<all>", `Province/State`)
+      )
+    save(data, file=fileName)
+  } else {
+    load(file=fileName)
+  }
   return(data)
 }
 
-allData =
-  loadData("time_series_19-covid-Confirmed.csv", "CumConfirmed") %>%
-  inner_join(loadData("time_series_19-covid-Deaths.csv", "CumDeaths")) %>%
-  inner_join(loadData("time_series_19-covid-Recovered.csv", "CumRecovered"))
+# loadData = function(fileName, columnName) {
+#   load(file=fileName)
+#   return(data)
+# }
 
-names(df.curated) <- names(allData)
-write.csv(df.curated, file="./curated_data_India/india_curated_data_BD.csv")
+allData =
+  loadData("time_series_covid19_confirmed_global.csv", "CumConfirmed") %>%
+  inner_join(loadData("time_series_covid19_deaths_global.csv", "CumDeaths")) %>%
+  inner_join(loadData("time_series_covid19_recovered_global.csv", "CumRecovered"))
+
+df.curated.global <- allData
+
+
+# Let’s push the updated file to GitHub -----------------------------------
+
+names(df.curated.india) <- names(df.curated.global)
+
+write.csv(df.curated.india, file="./curated_data/india_curated_data_BD.csv")
+
