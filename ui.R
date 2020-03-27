@@ -4,7 +4,7 @@ library(plotly)
 library(shinythemes)
 
 shinyUI(fluidPage(
-  theme=shinytheme("darkly"),
+  theme=shinytheme("slate"),
   tags$style(
     type='text/css', 
     ".selectize-input { font-family: Courier New, monospace; } .selectize-dropdown { font-family: Courier New, monospace; }"
@@ -15,8 +15,10 @@ shinyUI(fluidPage(
   
   titlePanel("Tracking Coronavirus (COVID-19) in India*"),
   sidebarLayout(
-    sidebarPanel("*Indian nationals only"),
-    mainPanel(em(paste0("Note: Data manually updated every day, once a day. Data obtained from Ministry of Health and Family Welfare [India] and JHU Github repository [global].")))
+    sidebarPanel("*Indian nationals only",
+                 helpText(paste0("Last update: ", datetime))),
+    mainPanel(
+      em(paste0("Note: Data curated from Ministry of Health and Family Welfare [India] and JHU Github repository [global]. Please report data errors at biplabendu.knights@gmail.com")))
     ),
   fluidRow(
     column(
