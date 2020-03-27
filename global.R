@@ -4,7 +4,7 @@ f1 = list(family="Courier New, monospace", size=12, color="rgb(30,30,30)")
 
 # Read the curated dataset from my GitHub account
 
-urlfile <- "https://github.com/biplabendu/COVID19_India/raw/master/curated_data/curated_data_BD.csv"
+urlfile <- "https://github.com/biplabendu/homepage/raw/master/covid19_data_india/curated_data/curated_data_BD.csv"
 
 
 daysSinceLastUpdate = function(fileName) {
