@@ -68,9 +68,6 @@ allData_india <-
 
 # Format the data for dates 22 Jan 2020 to current --------------------------------------------------------
 
-## Data available until
-current.date <- "26/03/20"
-
 ## Code borrowed from: https://biostats.w.uib.no/7-building-a-dataframe-from-a-bunch-of-vectorsseries/
 indian_states <- levels(factor(allData_india$State_or_Province)) %>% as.character()
 
@@ -150,5 +147,8 @@ df.curated.global <- allData
 
 names(df.curated.india) <- names(df.curated.global)
 
-write.csv(df.curated.india, file="./curated_data/india_curated_data_BD.csv")
+df.curated <-  rbind(df.curated.global %>% filter(!(`Country/Region` == "India")), df.curated.india)
 
+write.csv(df.curated, file="./curated_data/curated_data_BD.csv")
+write.csv(df.curated.india, file = "./curated_data/india_curated_data_BD.csv")
+write.csv(df.curated.global, file = "./curated_data/global_curated_data_BD.csv")

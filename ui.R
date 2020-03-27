@@ -1,8 +1,10 @@
 # Code borrowed from: https://towardsdatascience.com/create-a-coronavirus-app-using-r-shiny-and-plotly-6a6abf66091d
 library(shiny)
 library(plotly)
+library(shinythemes)
 
 shinyUI(fluidPage(
+  theme=shinytheme("darkly"),
   tags$style(
     type='text/css', 
     ".selectize-input { font-family: Courier New, monospace; } .selectize-dropdown { font-family: Courier New, monospace; }"
@@ -14,7 +16,7 @@ shinyUI(fluidPage(
   titlePanel("Tracking Coronavirus (COVID-19) in India*"),
   sidebarLayout(
     sidebarPanel("*Indian nationals only"),
-    mainPanel(em(paste0("Last updated on 25th March 2020 6:45 pm IST")))
+    mainPanel(em(paste0("Note: Data manually updated every day, once a day. Data obtained from Ministry of Health and Family Welfare [India] and JHU Github repository [global].")))
     ),
   fluidRow(
     column(
